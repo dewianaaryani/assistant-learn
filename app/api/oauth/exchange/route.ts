@@ -1,5 +1,7 @@
+import { prisma } from "@/app/lib/db";
 import { requireUser } from "@/app/lib/hooks";
 import { nylas, nylasConfig } from "@/app/lib/nylas";
+import { redirect } from "next/navigation";
 import { NextRequest } from "next/server";
 
 export async function GET(req: NextRequest) {
@@ -22,9 +24,19 @@ export async function GET(req: NextRequest) {
         });
         const {grantId, email} = response;
 
-        await prisma
+        await prisma.user.update({
+            where: {
+                id: session.user?.id
+            },
+            data: {
+                grantId: grantId,
+                grantEmail: email
+            }
+        })
     } catch (error) {
         console.log("Error something went wrong", error);
         
     }
+
+    redirect("/dashboard")
 }
