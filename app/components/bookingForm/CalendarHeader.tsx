@@ -26,16 +26,18 @@ export function CalendarHeader({
     .map((part) => part.value);
 
   return (
-    <div className="flex items-center pb-4">
-      <VisuallyHidden>
-        <h2>{calendarProps["aria-label"]}</h2>
-      </VisuallyHidden>
-      <h2 className="font-semibold">
-        {monthName}{" "}
-        <span className="text-muted-foreground text-sm font-medium">
-          {year}
-        </span>
-      </h2>
+    <div className="flex justify-between items-center pb-4">
+      <div>
+        <VisuallyHidden>
+          <h2>{calendarProps["aria-label"]}</h2>
+        </VisuallyHidden>
+        <h2 className="font-semibold">
+          {monthName}{" "}
+          <span className="text-muted-foreground text-sm font-medium">
+            {year}
+          </span>
+        </h2>
+      </div>
       <div className="flex items-center gap-2">
         <CalendarButton {...prevButtonProps}>
           <ChevronLeft className="size-4" />

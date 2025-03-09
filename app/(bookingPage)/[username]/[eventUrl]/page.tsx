@@ -1,4 +1,6 @@
-import { Calendar } from "@/app/components/bookingForm/Calendar";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { RenderCalendar } from "@/app/components/bookingForm/RenderCalendar";
+import { TimeTable } from "@/app/components/bookingForm/TimeTable";
 import { prisma } from "@/app/lib/db";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
@@ -43,14 +45,25 @@ async function getData(eventUrl: string, userName: string) {
 
 export default async function BookingFormRoute({
   params,
+  searchParams,
 }: {
   params: { userName: string; eventUrl: string };
+  searchParams: { date?: string };
 }) {
   const data = await getData(params.eventUrl, params.userName);
+  const selectedDate = searchParams.date
+    ? new Date(searchParams.date)
+    : new Date();
+
+  const formattedDate = new Intl.DateTimeFormat("en-US", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+  }).format(selectedDate);
   return (
     <div className="min-h-screen w-screen flex items-center justify-center">
       <Card className="max-w-[1000px] w-full mx-auto">
-        <CardContent className="p-5 grid md:grid-cols-[1fr,auto,1fr] gap-4">
+        <CardContent className="p-5 grid md:grid-cols-[1fr,auto,1fr,auto,1fr] gap-4">
           <div>
             <img
               src={data.User?.image as string}
@@ -68,7 +81,7 @@ export default async function BookingFormRoute({
               <p className="flex items-center">
                 <CalendarX2 className="size-4 mr-2 text-primary" />
                 <span className="text-sm text-muted-foreground font-medium">
-                  23. Sept 2025
+                  {formattedDate}
                 </span>
               </p>
               <p className="flex items-center">
@@ -86,7 +99,9 @@ export default async function BookingFormRoute({
             </div>
           </div>
           <Separator orientation="vertical" className="h-full w-[1px]" />
-          <Calendar />
+          <RenderCalendar availability={data.User?.availability as any} />
+          <Separator orientation="vertical" className="h-full w-[1px]" />
+          <TimeTable />
         </CardContent>
       </Card>
     </div>
